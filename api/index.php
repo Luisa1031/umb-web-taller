@@ -17,6 +17,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 
 require_once 'modelo.php';
 
+// ESTA LÍNEA ES CRÍTICA: Limpia cualquier output accidental
+if (ob_get_length()) {
+    ob_clean();
+}
+
 // Obtener el método de la petición
 $metodo = $_SERVER['REQUEST_METHOD'];
 
