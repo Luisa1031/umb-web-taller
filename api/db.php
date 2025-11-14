@@ -1,12 +1,10 @@
 <?php
-
-// Asegúrate de que no haya espacios en blanco ni líneas antes de este tag
 try {
     // Lectura de variables de entorno de Render
     $host = getenv('PLANETSCALE_HOST');
-    $db_name = getenv('PLANETSCALE_DATABASE');
-    $username = getenv('PLANETSCALE_USERNAME');
-    $password = getenv('PLANETSCALE_PASSWORD');
+    $db_name = getenv('PLANETSCALE_DBNAME');
+    $username = getenv('PLANETSCALE_USER');
+    $password = getenv('PLANETSCALE_PASS');
 
     // CONEXIÓN A PLANETSCALE (PDO con SSL)
     $dsn = "mysql:host={$host};dbname={$db_name};charset=utf8mb4";

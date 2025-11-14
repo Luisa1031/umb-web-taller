@@ -17,7 +17,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 
 require_once 'modelo.php';
 
-// ESTA LÍNEA ES CRÍTICA: Limpia cualquier output accidental
+// ESTA LÍNEA ES CRÍTICA: Limpia cualquier output accidental (Buffer Output)
 if (ob_get_length()) {
     ob_clean();
 }
@@ -38,9 +38,10 @@ switch ($metodo) {
     case 'POST':
         // **CREATE:** Crear una nueva tarea
         if (isset($datos['titulo'])) {
-            crearTarea($datos['titulo']);
+            // Intentar crear la tarea y obtener el ID
+            $id_nueva = crearTarea($datos['titulo']);
             http_response_code(201); // 201 Created
-            echo json_encode(['mensaje' => 'Tarea creada', 'titulo' => $datos['titulo']]);
+            echo json_encode(['mensaje' => 'Tarea creada', 'id' => $id_nueva, 'titulo' => $datos['titulo']]);
         } else {
             http_response_code(400); // 400 Bad Request
             echo json_encode(['error' => 'Falta el campo "titulo"']);
