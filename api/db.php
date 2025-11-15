@@ -47,7 +47,7 @@ try {
         'error' => 'Database connection failed', 
         'message' => 'Asegúrate de configurar las variables de entorno correctamente (HOST, USER, PASS, DBNAME).',
         // ¡ADVERTENCIA DE SEGURIDAD! Desactiva/Comenta la línea siguiente en Producción
-        'debug_error' => $e->getMessage() 
+    
     ]);
     
     // Terminamos la ejecución del script
