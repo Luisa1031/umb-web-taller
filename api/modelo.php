@@ -1,27 +1,31 @@
 <?php
-require_once 'db.php'; // Usa la conexión PDO
+require_once 'db.php'; // Conexión PDO
 
-// CREATE (Crear Tarea)
+// =========================
+//   CREATE
+// =========================
 function crearTarea($titulo) {
     global $pdo;
     $stmt = $pdo->prepare("INSERT INTO tareas (titulo) VALUES (?)");
-    // Usar execute() con un array de parámetros es la forma segura
-    $stmt->execute([$titulo]); 
-    // Devuelve el ID de la tarea recién creada
+    $stmt->execute([$titulo]);
     return $pdo->lastInsertId();
 }
 
-// READ (Leer Todas las Tareas)
+// =========================
+//   READ
+// =========================
 function obtenerTareas() {
     global $pdo;
-    // Consulta simple, no requiere prepared statement
     $stmt = $pdo->query("SELECT id, titulo, completada FROM tareas ORDER BY id DESC");
-    return $stmt->fetchAll();
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);  // 🔥 Importante
 }
 
-// UPDATE (Actualizar Tarea - título o estado)
+// =========================
+//   UPDATE
+// =========================
 function actualizarTarea($id, $titulo = null, $completada = null) {
     global $pdo;
+
     $sql_parts = [];
     $params = [];
 
@@ -29,26 +33,28 @@ function actualizarTarea($id, $titulo = null, $completada = null) {
         $sql_parts[] = "titulo = ?";
         $params[] = $titulo;
     }
-    
-    // Convertir el valor a 0 o 1, PlanetScale usa BOOLEAN/TINYINT(1)
+
     if ($completada !== null) {
-        $completada_val = filter_var($completada, FILTER_VALIDATE_BOOLEAN) ? 1 : 0;
+        // Manejo correcto de valores 0 o 1
+        $completada_val = ($completada == 1) ? 1 : 0;
         $sql_parts[] = "completada = ?";
         $params[] = $completada_val;
     }
 
     if (empty($sql_parts)) {
-        return false; // No hay datos para actualizar
+        return false;  // Nada para actualizar
     }
 
     $sql = "UPDATE tareas SET " . implode(", ", $sql_parts) . " WHERE id = ?";
-    $params[] = $id; // El ID siempre es el último parámetro
+    $params[] = $id;
 
     $stmt = $pdo->prepare($sql);
     return $stmt->execute($params);
 }
 
-// DELETE (Eliminar Tarea)
+// =========================
+//   DELETE
+// =========================
 function eliminarTarea($id) {
     global $pdo;
     $stmt = $pdo->prepare("DELETE FROM tareas WHERE id = ?");
